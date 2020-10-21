@@ -36,6 +36,7 @@ import Triangle.AbstractSyntaxTrees.IntTypeDenoter;
 import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
+import Triangle.AbstractSyntaxTrees.SelectCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
@@ -77,6 +78,7 @@ import Triangle.CodeGenerator.UnknownAddress;
 import Triangle.CodeGenerator.UnknownRoutine;
 import Triangle.CodeGenerator.UnknownValue;
 import javax.swing.table.DefaultTableModel;
+
 
 /**
  * Implements the Triangle Visitor interface, which is used to
@@ -122,6 +124,12 @@ public class TableVisitor implements Visitor {
   
   public Object visitLetCommand(LetCommand ast, Object o) {     
       ast.D.visit(this, null);
+      ast.C.visit(this, null);
+      
+      return(null);
+  }
+  public Object visitSelectCommand(SelectCommand ast, Object o) {     
+      ast.E.visit(this, null);
       ast.C.visit(this, null);
       
       return(null);

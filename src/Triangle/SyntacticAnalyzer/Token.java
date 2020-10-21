@@ -86,26 +86,27 @@ final class Token extends Object {
     WHILE		= 20,
     SKIP                = 21,
     ELSEIF              = 22,
-
+    SELECT              = 23,
+    FROM                = 24,
     // punctuation...
-    DOT			= 23,
-    COLON		= 24,
-    SEMICOLON	= 25,
-    COMMA		= 26,
-    BECOMES		= 27,
-    IS			= 28,
+    DOT			= 25,
+    COLON		= 26,
+    SEMICOLON	= 27,
+    COMMA		= 28,
+    BECOMES		= 29,
+    IS			= 30,
 
     // brackets...
-    LPAREN		= 29,
-    RPAREN		= 30,
-    LBRACKET	= 31,
-    RBRACKET	= 32,
-    LCURLY		= 33,
-    RCURLY		= 34,
+    LPAREN		= 31,
+    RPAREN		= 32,
+    LBRACKET	= 33,
+    RBRACKET	= 34,
+    LCURLY		= 35,
+    RCURLY		= 36,
 
     // special tokens...
-    EOT			= 35,
-    ERROR		= 36;
+    EOT			= 37,
+    ERROR		= 38;
 
   private static String[] tokenTable = new String[] {
     "<int>",
@@ -131,6 +132,8 @@ final class Token extends Object {
     "while",
     "skip",
     "elseif",
+    "select",
+    "from",
     ".",
     ":",
     ";",

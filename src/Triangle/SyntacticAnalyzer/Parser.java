@@ -62,6 +62,7 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordAggregate;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.SelectCommand;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -312,6 +313,17 @@ public class Parser {
      Se elimina la regla  | "let" Declaration "in" single-Command
      Se añade la regla | "let" Declaration "in" Command "end"
     */ 
+      
+    case Token.SELECT:
+    {
+        acceptIt();
+        Expression eAST = parseExpression();
+        accept(Token.FROM);
+        Command cAST = parseCommand();
+        finish(commandPos);
+        accept(Token.END);
+        commandAST = new SelectCommand(eAST, cAST, commandPos);
+    }
     case Token.LET:
       {
         acceptIt();

@@ -69,6 +69,7 @@ import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.SelectCommand;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -89,6 +90,7 @@ import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
+
 
 public final class Encoder implements Visitor {
 
@@ -137,6 +139,15 @@ public final class Encoder implements Visitor {
       emit(Machine.POPop, 0, 0, extraSize);
     return null;
   }
+  public Object visitSelectCommand(SelectCommand ast, Object o) {
+    Frame frame = (Frame) o;
+    int extraSize = ((Integer) ast.E.visit(this, frame)).intValue();
+    ast.C.visit(this, new Frame(frame, extraSize));
+    if (extraSize > 0)
+      emit(Machine.POPop, 0, 0, extraSize);
+    return null;
+  }
+  
 
   public Object visitSequentialCommand(SequentialCommand ast, Object o) {
     ast.C1.visit(this, o);
