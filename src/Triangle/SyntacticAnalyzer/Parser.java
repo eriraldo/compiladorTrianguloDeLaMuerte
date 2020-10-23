@@ -331,7 +331,7 @@ public class Parser {
       }
       break;
 
-    /*case Token.BEGIN:
+    /*case Token.BEGIN: //se elimina porque se eliminó palabra reservada
       acceptIt();
       commandAST = parseCommand();
       accept(Token.END);
@@ -641,15 +641,85 @@ public class Parser {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+  //Se agrega Proc-Func
+  
+  Declaration parseProFuncDeclaration() throws SyntaxError{
+    Declaration declarationAST = null;
+    SourcePosition declarationPOS = new SourcePosition();
+    start(declarationPOS);
+    switch (currentToken.kind){
+        case Token.PROC:
+        {
+            acceptIt();
+            Identifier iAst = parseIdentifier();
+            accept(Token.LPAREN);
+            FormalParameterSequence formalParameterSequence = parseFormalParameterSequence();
+            accept(Token.RPAREN);
+            accept(Token.IS); //este token es ~
+            Command cAST = parseCommand();
+            accept(Token.END);
+            finish(declarationPOS);
+            declarationAST = new ProcDeclaration(iAst, formalParameterSequence, cAST, declarationPOS);
+        }
+        case Token.FUNC:{
+            acceptIt();
+            Identifier iAst = parseIdentifier();
+            accept(Token.LPAREN);
+            FormalParameterSequence formalParameterSequence = parseFormalParameterSequence();
+            accept(Token.RPAREN);
+            accept(Token.COLON); //este token es ~
+            TypeDenoter typeDenoter = parseTypeDenoter();
+            accept(Token.IS);
+            Expression expression = parseExpression();
+            finish(declarationPOS);
+            declarationAST = new FuncDeclaration(iAst, formalParameterSequence, typeDenoter, expression, declarationPOS);         
+        }
+    }
+    return declarationAST;
+}
+          
+  
+  
+  //Se agrega nueva regla compound-Declaration
+  Declaration parseCompoundDeclaration() throws SyntaxError {
+      Declaration declarationAST = null; // in case there's a syntactic error      
+      SourcePosition declarationPos = new SourcePosition();
+      start(declarationPos);
+      switch (currentToken.kind) {
+          case Token.RECURSIVE:{
+              acceptIt();
+              declarationAST = parseProcFunc();
+              accept(Token.END);
+              finish(declarationPos);
+            }
+            break;
+          case Token.LOCAL:{
+              acceptIt();
+              Declaration d2AST = parseDeclaration();
+              accept(Token.IN);
+              Declaration d3AST = parseDeclaration();
+              accept(Token.END);
+              finish(declarationPos);
+              declarationAST = new LocalDeclaration(d2AST, d3AST,declarationPos);
+            }
+            break;
+          default:{
+            declarationAST = parseSingleDeclaration();
+          }
+      }
+      return declarationAST;
+  }
+  
+  
   Declaration parseDeclaration() throws SyntaxError {
     Declaration declarationAST = null; // in case there's a syntactic error
 
     SourcePosition declarationPos = new SourcePosition();
     start(declarationPos);
-    declarationAST = parseSingleDeclaration();
+    declarationAST = parseCompoundDeclaration();//se cambió singleDeclaration por CompoundDeclaration
     while (currentToken.kind == Token.SEMICOLON) {
       acceptIt();
-      Declaration d2AST = parseSingleDeclaration();
+      Declaration d2AST = parseCompoundDeclaration(); //se cambió singleDeclaration por CompoundDeclaration
       finish(declarationPos);
       declarationAST = new SequentialDeclaration(declarationAST, d2AST,
         declarationPos);
