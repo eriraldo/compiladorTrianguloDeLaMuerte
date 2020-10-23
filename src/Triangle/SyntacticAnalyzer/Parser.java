@@ -700,7 +700,7 @@ public class Parser {
               Declaration d3AST = parseDeclaration();
               accept(Token.END);
               finish(declarationPos);
-              declarationAST = new LocalDeclaration(d2AST, d3AST,declarationPos);
+              declarationAST = new parseDeclaration(d2AST, d3AST,declarationPos);
             }
             break;
           default:{
@@ -750,10 +750,13 @@ public class Parser {
       {
         acceptIt();
         Identifier iAST = parseIdentifier();
-        accept(Token.COLON);
-        TypeDenoter tAST = parseTypeDenoter();
+        //accept(Token.COLON);
+          accept(Token.BECOMES); //se agrega :=
+        //TypeDenoter tAST = parseTypeDenoter();
+        Expression eAST = parseExpression();
         finish(declarationPos);
-        declarationAST = new VarDeclaration(iAST, tAST, declarationPos);
+        declarationAST = new VarDeclaration(iAST, eAST, declarationPos);
+        //declarationAST = new VarDeclaration(iAST, eAST, declarationPos);
       }
       break;
 
@@ -766,6 +769,7 @@ public class Parser {
         accept(Token.RPAREN);
         accept(Token.IS);
         Command cAST = parseSingleCommand();
+        accept(Token.END); //se agrega palabra reservada END
         finish(declarationPos);
         declarationAST = new ProcDeclaration(iAST, fpsAST, cAST, declarationPos);
       }
