@@ -62,7 +62,6 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordAggregate;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SelectCommand;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -249,13 +248,42 @@ public class Parser {
 // parseCommand parses the command, and constructs an AST
 // to represent its phrase structure.
 
+  Command parseRestOfIf() throws SyntaxError{
+    Command commandAST = null;
+    
+    SourcePosition commandPos = new SourcePosition();
+
+    start(commandPos);
+    
+    switch(currentToken.kind){
+          case Token.ELSEIF: {
+              acceptIt();
+              Command c1AST = parseRestOfIf();
+              finish(commandPos);
+          }
+          case Token.ELSE: {
+              acceptIt();
+              finish(commandPos);
+              //Command commandAST = new IfCommand(e);
+          }
+          default:
+              syntacticError("\"%\" is not a reserved word",
+              currentToken.spelling);
+              break;
+
+      }
+    return null;
+}
+  
   Command parseCommand() throws SyntaxError {
     Command commandAST = null; // in case there's a syntactic error
 
     SourcePosition commandPos = new SourcePosition();
 
     start(commandPos);
+    //System.out.println(currentToken.kind);
     commandAST = parseSingleCommand();
+    
     while (currentToken.kind == Token.SEMICOLON) {
       acceptIt();
       Command c2AST = parseSingleCommand();
@@ -273,11 +301,12 @@ public class Parser {
 
     switch (currentToken.kind) {
         
-    //Añadir "skip" a single-Command    
+    //Añadir "skip" a single-Command     
     case Token.SKIP:
       {
         acceptIt();
         finish(commandPos);
+        commandAST = new EmptyCommand(commandPos);
       }
     break;
 
@@ -302,28 +331,12 @@ public class Parser {
       }
       break;
 
-    /* Eliminar de Single-Command| "begin" Command "end"
-      case Token.BEGIN:
+    /*case Token.BEGIN:
       acceptIt();
       commandAST = parseCommand();
       accept(Token.END);
       break;*/
-      
-    /*
-     Se elimina la regla  | "let" Declaration "in" single-Command
-     Se añade la regla | "let" Declaration "in" Command "end"
-    */ 
-      
-    case Token.SELECT:
-    {
-        acceptIt();
-        Expression eAST = parseExpression();
-        accept(Token.FROM);
-        Command cAST = parseCommand();
-        finish(commandPos);
-        accept(Token.END);
-        commandAST = new SelectCommand(eAST, cAST, commandPos);
-    }
+
     case Token.LET:
       {
         acceptIt();
@@ -331,7 +344,7 @@ public class Parser {
         accept(Token.IN);
         Command cAST = parseCommand(); //Change parseSingleCommand to parseCommand
         finish(commandPos);
-        accept(Token.END);
+        accept(Token.END); //Added rule : end word after let instruction
         commandAST = new LetCommand(dAST, cAST, commandPos);
       }
       break;
@@ -341,24 +354,32 @@ public class Parser {
         acceptIt();
         Expression eAST = parseExpression();
         accept(Token.THEN);
-        Command c1AST = parseCommand(); //Change parseSingleCommand to parseCommand
-        while(currentToken.kind == Token.ELSEIF){ // Adding rule ("elseif" Expression "then" Command)*
-            accept(Token.ELSEIF);
-            eAST = parseExpression();
-            accept(Token.THEN);
-            Command cAST = parseCommand();
-            finish(commandPos);
+        Command c1AST = parseCommand(); //
+        switch(currentToken.kind){
+            case Token.ELSEIF: {
+                acceptIt();
+                Command c2AST = parseRestOfIf();
+                finish(commandPos);
+            }
+            case Token.ELSE: {
+                acceptIt();
+                Command c2AST = parseCommand();
+                finish(commandPos);
+            }
+            default:
+                syntacticError("\"%\" is not a reserved word",
+                currentToken.spelling);
+                break;
+                
         }
         accept(Token.ELSE);
-        Command c2AST = parseCommand();
-        accept(Token.END);
+        Command c2AST = parseSingleCommand();
         finish(commandPos);
-        //commandAST = new IfCommand(eAST, c1AST, c2AST, commandPos); *DUDA* COMO FORMO LOS ASTs con N elseif
+        commandAST = new IfCommand(eAST, c1AST, c2AST, commandPos);
       }
       break;
 
-    /* Se elimina la regla  | "while" Expression "do" single-Command
-      case Token.WHILE:
+    case Token.WHILE:
       {
         acceptIt();
         Expression eAST = parseExpression();
@@ -367,8 +388,8 @@ public class Parser {
         finish(commandPos);
         commandAST = new WhileCommand(eAST, cAST, commandPos);
       }
-      break;*/
-      
+      break;
+
     case Token.SEMICOLON:
     case Token.END:
     case Token.ELSE:

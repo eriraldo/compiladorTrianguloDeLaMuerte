@@ -64,7 +64,6 @@ import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SelectCommand;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -136,13 +135,6 @@ public final class Checker implements Visitor {
   public Object visitLetCommand(LetCommand ast, Object o) {
     idTable.openScope();
     ast.D.visit(this, null);
-    ast.C.visit(this, null);
-    idTable.closeScope();
-    return null;
-  }
-  public Object visitSelectCommand(SelectCommand ast, Object o) {
-    idTable.openScope();
-    ast.E.visit(this, null);
     ast.C.visit(this, null);
     idTable.closeScope();
     return null;

@@ -68,45 +68,55 @@ final class Token extends Object {
 
     // reserved words - must be in alphabetical order...
     ARRAY		= 4,
-    BEGIN		= 5,
+    //BEGIN		= 5, // se elimina Begin
+    CASE                = 5, // se agrega case
     CONST		= 6,
-    DO			= 7,
-    ELSE		= 8,
-    END			= 9,
-    FUNC		= 10,
-    IF			= 11,
-    IN			= 12,
-    LET			= 13,
-    OF			= 14,
-    PROC		= 15,
-    RECORD		= 16,
-    THEN		= 17,
-    TYPE		= 18,
-    VAR			= 19,
-    WHILE		= 20,
-    SKIP                = 21,
-    ELSEIF              = 22,
-    SELECT              = 23,
-    FROM                = 24,
+    CONTINUE            = 7, // se agrega continue
+    DO			= 8,
+    ELSE		= 9,
+    ELSEIF              = 10,
+    END			= 11,
+    FOR                 = 12, //se agrega for
+    FROM                = 13, //se agrega from
+    FUNC		= 14,
+    IF			= 15,
+    IN			= 16,
+    LEAVE               = 17,
+    LET			= 18,
+    LOCAL               = 19, // se agrega local
+    LOOP                = 20, //se agrega loop
+    OF			= 21,
+    PROC		= 22,
+    RECORD		= 23,
+    RECURSIVE           = 24, //se agrega recursive
+    SELECT              = 25, //se agrega select
+    SKIP                = 26,
+    THEN		= 27,
+    TO                  = 28, //se agrega to
+    TYPE		= 29,
+    UNTIL               = 30, //se agrega until
+    VAR			= 31,
+    WHILE		= 32,
+
     // punctuation...
-    DOT			= 25,
-    COLON		= 26,
-    SEMICOLON	= 27,
-    COMMA		= 28,
-    BECOMES		= 29,
-    IS			= 30,
+    DOT			= 33,
+    COLON		= 34,
+    SEMICOLON	        = 35,
+    COMMA		= 36,
+    BECOMES		= 37,
+    IS			= 38,
 
     // brackets...
-    LPAREN		= 31,
-    RPAREN		= 32,
-    LBRACKET	= 33,
-    RBRACKET	= 34,
-    LCURLY		= 35,
-    RCURLY		= 36,
+    LPAREN		= 39,
+    RPAREN		= 40,
+    LBRACKET	        = 41,
+    RBRACKET	        = 42,
+    LCURLY		= 43,
+    RCURLY		= 44,
 
     // special tokens...
-    EOT			= 37,
-    ERROR		= 38;
+    EOT			= 45,
+    ERROR		= 46;
 
   private static String[] tokenTable = new String[] {
     "<int>",
@@ -114,26 +124,34 @@ final class Token extends Object {
     "<identifier>",
     "<operator>",
     "array",
-    "begin",
+    //"begin",
+    "case",
     "const",
+    "continue",
     "do",
     "else",
+    "elseif",
     "end",
+    "for",
+    "from",
     "func",
     "if",
     "in",
     "let",
+    "local",
+    "loop",
     "of",
     "proc",
     "record",
+    "recursive",
+    "select",
+    "skip",
     "then",
+    "to",
     "type",
+    "until",
     "var",
     "while",
-    "skip",
-    "elseif",
-    "select",
-    "from",
     ".",
     ":",
     ";",
@@ -151,6 +169,6 @@ final class Token extends Object {
   };
 
   private final static int	firstReservedWord = Token.ARRAY,
-  				lastReservedWord  = Token.ELSEIF;
+  				lastReservedWord  = Token.WHILE;
 
 }
