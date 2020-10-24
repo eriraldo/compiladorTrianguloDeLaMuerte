@@ -688,7 +688,7 @@ public class Parser {
       switch (currentToken.kind) {
           case Token.RECURSIVE:{
               acceptIt();
-              declarationAST = parseProcFunc();
+              declarationAST = parseProcFuncs();
               accept(Token.END);
               finish(declarationPos);
             }
@@ -760,7 +760,7 @@ public class Parser {
       }
       break;
 
-    case Token.PROC:
+    case Token.PROC: //se modificó
       {
         acceptIt();
         Identifier iAST = parseIdentifier();
