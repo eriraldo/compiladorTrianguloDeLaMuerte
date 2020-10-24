@@ -685,6 +685,7 @@ public class Parser {
       Declaration declarationAST = null; // in case there's a syntactic error      
       SourcePosition declarationPos = new SourcePosition();
       start(declarationPos);
+      //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@CREO QUE AQUÍ FALTA UN SINGLE-DECLARATION@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       switch (currentToken.kind) {
           case Token.RECURSIVE:{
               acceptIt();
@@ -700,7 +701,8 @@ public class Parser {
               Declaration d3AST = parseDeclaration();
               accept(Token.END);
               finish(declarationPos);
-              declarationAST = new parseDeclaration(d2AST, d3AST,declarationPos);
+              declarationAST = new SequentialDeclaration(d2AST, d3AST,declarationPos);//SE USA SEQUENTIAL PORQUE
+              //SE TIENE QUE AGREGAR 2 DECLARATIONS
             }
             break;
           default:{
@@ -709,7 +711,22 @@ public class Parser {
       }
       return declarationAST;
   }
-  
+  Declaration parseProcFuncs() throws SyntaxError {//Se agrega el parseProcFuncs
+        Declaration decAST = null;
+        SourcePosition pfsPos = new SourcePosition();
+        start(pfsPos);
+        decAST = parseProFuncDeclaration();
+        accept(Token.STICK);
+        Declaration d2AST = parseProFuncDeclaration();
+        while(currentToken.kind == Token.STICK){
+            acceptIt();
+            Declaration dec2AST = parseProFuncDeclaration();
+            finish(pfsPos);
+            d2AST = new SequentialDeclaration(d2AST, dec2AST , pfsPos);
+        }
+        decAST = new SequentialDeclaration(decAST, d2AST, pfsPos);//se usa este porque hay varias declaraciones
+        return decAST;
+    }
   
   Declaration parseDeclaration() throws SyntaxError {
     Declaration declarationAST = null; // in case there's a syntactic error
@@ -746,16 +763,16 @@ public class Parser {
       }
       break;
 
-    case Token.VAR:
+    case Token.VAR://Hay que revisar este, creo que hay que agregar un VAR2 
       {
         acceptIt();
         Identifier iAST = parseIdentifier();
-        //accept(Token.COLON);
-          accept(Token.BECOMES); //se agrega :=
-        //TypeDenoter tAST = parseTypeDenoter();
-        Expression eAST = parseExpression();
+        accept(Token.COLON);
+        //  accept(Token.BECOMES); //se agrega :=
+        TypeDenoter tAST = parseTypeDenoter();
+        //TypeDenoter tAST = parseExpression();
         finish(declarationPos);
-        declarationAST = new VarDeclaration(iAST, eAST, declarationPos);
+        declarationAST = new VarDeclaration(iAST, tAST, declarationPos);
         //declarationAST = new VarDeclaration(iAST, eAST, declarationPos);
       }
       break;

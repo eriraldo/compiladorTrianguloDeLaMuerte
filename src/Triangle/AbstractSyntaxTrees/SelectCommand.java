@@ -17,7 +17,8 @@ public class SelectCommand extends Command{
   }
 
   public Object visit(Visitor v, Object o) {
-    return v.visitSelectCommand(this, o);
+    //return v.visitSelectCommand(this, o);
+    return null;//AQUI NO TIENE QUE RETORNAR NULL
   }
 
   public Expression E;
